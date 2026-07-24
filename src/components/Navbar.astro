@@ -1,0 +1,90 @@
+---
+import logo from "../assets/logo.png";
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-gray-200/60 bg-white/90 backdrop-blur-lg"
+>
+  <nav class="container-custom flex h-20 items-center justify-between">
+
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-3">
+
+      <img
+        src={logo.src}
+        alt="Food Express"
+        class="h-14 w-14 object-contain transition-transform duration-300 hover:scale-110"
+      />
+
+      <div class="leading-tight">
+
+        <h1 class="text-2xl font-extrabold text-red-600">
+          Food Express
+        </h1>
+
+        <p class="text-sm text-gray-500">
+          Comida Rápida
+        </p>
+
+      </div>
+
+    </a>
+
+    <!-- Navegación escritorio -->
+    <ul class="hidden items-center gap-10 font-medium lg:flex">
+
+      <li>
+        <a
+          href="#inicio"
+          class="transition duration-300 hover:text-red-600"
+        >
+          Inicio
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#menu"
+          class="transition duration-300 hover:text-red-600"
+        >
+          Menú
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#quienes"
+          class="transition duration-300 hover:text-red-600"
+        >
+          Quiénes Somos
+        </a>
+      </li>
+
+    </ul>
+
+    <!-- Botón hamburguesa -->
+    <button
+      id="menuButton"
+      class="group flex h-12 w-12 items-center justify-center rounded-xl border border-gray-200 bg-white shadow-sm transition duration-300 hover:border-red-600 hover:bg-red-600"
+      aria-label="Abrir menú"
+    >
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-7 w-7 text-gray-700 transition duration-300 group-hover:text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      </svg>
+
+    </button>
+
+  </nav>
+</header>
