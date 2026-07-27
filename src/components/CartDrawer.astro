@@ -1,0 +1,83 @@
+<aside
+  id="cartDrawer"
+  class="fixed left-0 top-0 z-[95] h-screen w-full max-w-md -translate-x-full overflow-y-auto bg-[var(--color-dark-soft)] shadow-2xl transition-transform duration-300"
+>
+
+  <div class="sticky top-0 flex items-center justify-between border-b border-white/10 bg-[var(--color-dark-soft)] p-6">
+
+    <div>
+
+      <h2 class="text-2xl font-bold">
+
+        Mi Pedido
+
+      </h2>
+
+      <p class="text-sm text-gray-400">
+
+        Food Express
+
+      </p>
+
+    </div>
+
+    <button
+      id="closeCart"
+      class="rounded-xl bg-red-600 px-4 py-2 font-bold"
+    >
+      ✕
+    </button>
+
+  </div>
+
+  <div
+    id="cartItems"
+    class="space-y-5 p-6"
+  >
+
+    <p class="text-center text-gray-400">
+
+      Tu carrito está vacío.
+
+    </p>
+
+  </div>
+
+  <div class="border-t border-white/10 p-6">
+
+    <div class="mb-5 flex items-center justify-between">
+
+      <span class="text-lg">
+
+        Total
+
+      </span>
+
+      <strong
+        id="cartTotal"
+        class="text-2xl text-yellow-400"
+      >
+
+        $0
+
+      </strong>
+
+    </div>
+
+    <button
+      id="sendWhatsapp"
+      class="btn-primary w-full justify-center"
+    >
+
+      Enviar pedido
+
+    </button>
+
+  </div>
+
+</aside>
+
+<div
+  id="cartOverlay"
+  class="fixed inset-0 z-[94] hidden bg-black/70 backdrop-blur-sm"
+></div>

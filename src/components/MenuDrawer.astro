@@ -1,7 +1,7 @@
 ---
 import { products } from "../data/products";
 
-const phone = "5490000000000";
+const formatter = new Intl.NumberFormat("es-AR");
 ---
 
 <div
@@ -19,11 +19,15 @@ const phone = "5490000000000";
     <div>
 
       <h2 class="text-2xl font-bold">
+
         Menú
+
       </h2>
 
       <p class="text-sm text-gray-400">
+
         Food Express
+
       </p>
 
     </div>
@@ -32,7 +36,9 @@ const phone = "5490000000000";
       id="closeDrawer"
       class="rounded-xl bg-red-600 px-4 py-2 font-bold"
     >
+
       ✕
+
     </button>
 
   </div>
@@ -40,69 +46,87 @@ const phone = "5490000000000";
   <div class="space-y-6 p-6">
 
     {
-      products.map((product)=>{
 
-        const url=`https://wa.me/${phone}?text=${encodeURIComponent(product.whatsapp)}`;
+      products.map((product)=>(
 
-        return(
+        <article
+          class="card cursor-pointer overflow-hidden"
+          data-product-id={product.id}
+        >
 
-<a
-href={url}
-target="_blank"
-class="card block overflow-hidden"
->
+          <img
+            src={product.image.src}
+            alt={product.name}
+            class="h-48 w-full object-cover"
+          />
 
-<img
-src={product.image.src}
-alt={product.name}
-class="h-48 w-full object-cover"
-/>
+          <div class="p-5">
 
-<div class="p-5">
+            <span class="text-sm text-[var(--color-primary)]">
 
-<span class="text-sm text-[var(--color-primary)]">
+              {product.category}
 
-{product.category}
+            </span>
 
-</span>
+            <h3 class="mt-2 text-xl font-bold">
 
-<h3 class="mt-2 text-xl font-bold">
+              {product.name}
 
-{product.name}
+            </h3>
 
-</h3>
+            <p class="mt-2 text-sm text-gray-400">
 
-<p class="mt-2 text-sm text-gray-400">
+              {product.description}
 
-{product.description}
+            </p>
 
-</p>
+            <div class="mt-4 flex items-center justify-between">
 
-<div class="mt-4 flex items-center justify-between">
+              {
 
-<strong class="text-xl text-[var(--color-primary)]">
+                product.available
 
-{product.price}
+                ? (
 
-</strong>
+                  <strong class="text-xl text-[var(--color-primary)]">
 
-<span class="btn-primary text-sm">
+                    ${formatter.format(product.price)}
 
-Pedir
+                  </strong>
 
-</span>
+                )
 
-</div>
+                : (
 
-</div>
+                  <strong class="text-red-500">
 
-</a>
+                    Próximamente
 
-)
+                  </strong>
 
-})
+                )
 
-}
+              }
+
+              <button
+                class="btn-primary text-sm"
+                data-open-product={product.id}
+                type="button"
+              >
+
+                Ver
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      ))
+
+    }
 
   </div>
 

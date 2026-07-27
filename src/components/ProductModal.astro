@@ -1,0 +1,123 @@
+<div
+  id="productModalOverlay"
+  class="fixed inset-0 z-[90] hidden items-center justify-center bg-black/80 p-5 backdrop-blur-sm"
+>
+
+  <div
+    id="productModal"
+    class="relative max-h-[95vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-[var(--color-dark-soft)] shadow-2xl"
+  >
+
+    <button
+      id="closeProductModal"
+      class="absolute right-5 top-5 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-red-600 text-xl font-bold transition hover:scale-105"
+      type="button"
+    >
+      ✕
+    </button>
+
+    <img
+      id="modalImage"
+      src=""
+      alt=""
+      class="h-72 w-full object-cover"
+    />
+
+    <div class="p-8">
+
+      <span
+        id="modalCategory"
+        class="inline-flex rounded-full bg-yellow-500/15 px-4 py-2 text-sm font-semibold text-[var(--color-primary)]"
+      ></span>
+
+      <h2
+        id="modalTitle"
+        class="mt-5 text-4xl font-bold"
+      ></h2>
+
+      <p
+        id="modalDescription"
+        class="mt-6 leading-8 text-gray-400"
+      ></p>
+
+      <div
+        id="modalPrice"
+        class="mt-8 text-3xl font-bold text-[var(--color-primary)]"
+      ></div>
+
+      <div
+        id="saucesContainer"
+        class="mt-10 hidden"
+      >
+
+        <h3 class="mb-4 text-lg font-bold">
+
+          Elegí tus aderezos
+
+        </h3>
+
+        <div
+          id="saucesList"
+          class="grid gap-3"
+        ></div>
+
+      </div>
+
+      <div class="mt-10">
+
+        <h3 class="mb-4 text-lg font-bold">
+
+          Cantidad
+
+        </h3>
+
+        <div class="flex items-center gap-4">
+
+          <button
+            id="decreaseQty"
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-700 text-2xl"
+            type="button"
+          >
+
+            −
+
+          </button>
+
+          <span
+            id="productQuantity"
+            class="w-10 text-center text-2xl font-bold"
+          >
+
+            1
+
+          </span>
+
+          <button
+            id="increaseQty"
+            class="flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-700 text-2xl"
+            type="button"
+          >
+
+            +
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <button
+        id="addToCartButton"
+        class="btn-primary mt-12 w-full justify-center py-5 text-lg"
+        type="button"
+      >
+
+        Agregar al carrito
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

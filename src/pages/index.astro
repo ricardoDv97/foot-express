@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ProductModal from "../components/ProductModal.astro";
 
 import Navbar from "../components/Navbar.astro";
 import Hero from "../components/Hero.astro";
@@ -8,6 +9,8 @@ import PromoBanner from "../components/PromoBanner.astro";
 import About from "../components/About.astro";
 import Footer from "../components/Footer.astro";
 import MenuDrawer from "../components/MenuDrawer.astro";
+import CartButton from "../components/CartButton.astro";
+import CartDrawer from "../components/CartDrawer.astro";
 ---
 
 <Layout
@@ -25,12 +28,27 @@ description="La mejor comida rápida de Miguel Lanús"
 
 <About/>
 
+<ProductModal/>
+
 <Footer/>
 
 <MenuDrawer/>
 
+
 <script type="module">
+
 import "../scripts/menu.js";
+
+import "../scripts/modal.js";
+
+import "../scripts/cart.js";
+
+import "../scripts/whatsapp.js";
+
 </script>
+
+<CartButton/>
+
+<CartDrawer/>
 
 </Layout>
