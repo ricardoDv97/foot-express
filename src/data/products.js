@@ -34,9 +34,9 @@ export const products = [
     name: "Hamburguesa Completa",
 
     description:
-      "Carne, queso, lechuga, tomate y papas fritas.",
+      "Carne, queso, huevo, paleta, lechuga, tomate y adherezos.",
 
-    price: "Próximamente",
+    price: "$4.000",
 
     image: pizza,
 
