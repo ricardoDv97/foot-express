@@ -1,5 +1,7 @@
 ---
 import pizza from "../assets/pizza-hero.png";
+import { Image } from "astro:assets";
+import { SITE } from "../config/site.js";
 ---
 
 <section
@@ -56,9 +58,10 @@ import pizza from "../assets/pizza-hero.png";
         </a>
 
         <a
-          href="https://wa.me/5490000000000"
+          href={SITE.whatsappUrl}
           class="btn-secondary"
           target="_blank"
+          rel="noopener noreferrer"
         >
           Pedir por WhatsApp
         </a>
@@ -127,9 +130,15 @@ import pizza from "../assets/pizza-hero.png";
 
       <div class="absolute h-[450px] w-[450px] rounded-full bg-yellow-500/15 blur-3xl"></div>
 
-      <img
-        src={pizza.src}
+      <Image
+        src={pizza}
         alt="Pizza"
+        width={960}
+        format="webp"
+        quality={75}
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
         class="floating relative z-10 w-full max-w-xl drop-shadow-[0_35px_45px_rgba(0,0,0,.7)]"
       />
 

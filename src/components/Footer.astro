@@ -1,3 +1,7 @@
+---
+import { SITE } from "../config/site.js";
+---
+
 <footer class="border-t border-white/10 bg-black">
 
   <div class="container-custom py-16">
@@ -26,13 +30,13 @@
 
         <ul class="mt-5 space-y-3 text-gray-400">
 
-          <li>📍 Capitán Giachino 2025</li>
+          <li>📍 {SITE.address}</li>
 
-          <li>📌 Miguel Lanús</li>
+          <li>📌 {SITE.neighborhood}</li>
 
-          <li>🏙 Posadas - Misiones</li>
+          <li>🏙 {SITE.city} - {SITE.province}</li>
 
-          <li>🕒 Todos los días</li>
+          <li>🕒 {SITE.businessHours[0].day}</li>
 
         </ul>
 
@@ -45,8 +49,9 @@
         </h4>
 
         <a
-          href="https://wa.me/5490000000000"
+          href={SITE.whatsappUrl}
           target="_blank"
+          rel="noopener noreferrer"
           class="btn-primary mt-6"
         >
           WhatsApp

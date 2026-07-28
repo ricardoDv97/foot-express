@@ -1,6 +1,8 @@
 export const SITE = {
   name: "Food Express",
 
+  siteUrl: "https://foodexpress.vercel.app",
+
   phone: "5493764576788",
 
   whatsappUrl: "https://wa.me/5493764576788",

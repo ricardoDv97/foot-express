@@ -23,9 +23,3 @@ export function saveCart(cart){
     localStorage.setItem(KEY,JSON.stringify(cart));
 
 }
-
-export function clearCart(){
-
-    localStorage.removeItem(KEY);
-
-}

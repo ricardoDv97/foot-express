@@ -1,13 +1,21 @@
 <aside
   id="cartDrawer"
   class="fixed left-0 top-0 z-[95] h-screen w-full max-w-md -translate-x-full overflow-y-auto bg-[var(--color-dark-soft)] shadow-2xl transition-transform duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="cartDrawerTitle"
+  aria-hidden="true"
+  tabindex="-1"
 >
 
   <div class="sticky top-0 flex items-center justify-between border-b border-white/10 bg-[var(--color-dark-soft)] p-6">
 
     <div>
 
-      <h2 class="text-2xl font-bold">
+      <h2
+        id="cartDrawerTitle"
+        class="text-2xl font-bold"
+      >
 
         Mi Pedido
 
@@ -24,6 +32,8 @@
     <button
       id="closeCart"
       class="rounded-xl bg-red-600 px-4 py-2 font-bold"
+      type="button"
+      aria-label="Cerrar carrito"
     >
       ✕
     </button>
@@ -32,18 +42,40 @@
 
   <div
     id="cartItems"
-    class="space-y-5 p-6"
+    class="space-y-4 p-6"
   >
 
-    <p class="text-center text-gray-400">
+    <div class="rounded-2xl border border-dashed border-white/15 bg-white/[0.03] px-6 py-12 text-center">
 
-      Tu carrito está vacío.
+      <span class="text-4xl" aria-hidden="true">🛒</span>
 
-    </p>
+      <h3 class="mt-4 text-lg font-bold">
+
+        Tu carrito está vacío
+
+      </h3>
+
+      <p class="mt-2 text-sm leading-6 text-gray-400">
+
+        Agregá tus productos favoritos para comenzar tu pedido.
+
+      </p>
+
+    </div>
 
   </div>
 
   <div class="border-t border-white/10 p-6">
+
+    <button
+      id="clearCart"
+      class="mb-5 hidden w-full rounded-xl border border-red-500/40 px-4 py-3 text-sm font-bold text-red-300 transition hover:bg-red-500/10"
+      type="button"
+    >
+
+      Vaciar carrito
+
+    </button>
 
     <div class="mb-5 flex items-center justify-between">
 

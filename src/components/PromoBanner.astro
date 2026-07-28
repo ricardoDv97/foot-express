@@ -1,3 +1,7 @@
+---
+import { SITE } from "../config/site.js";
+---
+
 <section
 class="bg-[var(--color-primary)] py-14"
 >
@@ -27,8 +31,9 @@ Consultanos por WhatsApp y conocé nuestros combos.
 </div>
 
 <a
-href="https://wa.me/5490000000000"
+href={SITE.whatsappUrl}
 target="_blank"
+rel="noopener noreferrer"
 class="rounded-xl bg-black px-8 py-4 font-bold text-white transition hover:scale-105"
 >
 

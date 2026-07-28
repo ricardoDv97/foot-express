@@ -1,43 +1,42 @@
 import { formatPrice } from "./formatPrice.js";
 
-export function buildWhatsappMessage(cart){
+const SEPARATOR = "────────────────";
 
-let message="🍔 *FOOD EXPRESS*%0A%0A";
+function buildOptionSection(title, values) {
+  if (!values.length) return [];
 
-message+="Hola 👋%0A";
-
-message+="Quiero realizar el siguiente pedido:%0A%0A";
-
-let total=0;
-
-cart.forEach(item=>{
-
-message+=`${item.quantity} x ${item.product.name}%0A`;
-
-if(item.options.sauces.length){
-
-message+="Aderezos:%0A";
-
-item.options.sauces.forEach(s=>{
-
-message+=`• ${s}%0A`;
-
-});
-
+  return [title, "", ...values.flatMap((value) => [`• ${value}`, ""])];
 }
 
-message+=`Subtotal: ${formatPrice(item.subtotal)}%0A`;
+export function buildWhatsAppMessage({ items, total }) {
+  const orderLines = items.flatMap((item) => [
+    SEPARATOR,
+    "",
+    `${item.quantity} x ${item.product.name}`,
+    "",
+    ...buildOptionSection("Aderezos", item.options.sauces),
+    ...buildOptionSection("Extras", item.options.extras),
+    ...buildOptionSection("Notas", item.options.notes ? [item.options.notes] : []),
+    "Subtotal",
+    "",
+    formatPrice(item.subtotal),
+    "",
+  ]);
 
-message+="----------------------------%0A";
-
-total+=item.subtotal;
-
-});
-
-message+=`%0ATOTAL: ${formatPrice(total)}%0A%0A`;
-
-message+="Muchas gracias.";
-
-return message;
-
+  return [
+    "🍔 FOOD EXPRESS",
+    "",
+    "Hola 👋",
+    "",
+    "Quiero realizar el siguiente pedido:",
+    "",
+    ...orderLines,
+    SEPARATOR,
+    "",
+    "TOTAL",
+    "",
+    formatPrice(total),
+    "",
+    "Muchas gracias.",
+  ].join("\n");
 }

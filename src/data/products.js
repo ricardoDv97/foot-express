@@ -4,13 +4,16 @@
 // ============================
 
 // Imágenes
-import pizza from "../assets/pizza-hero.png";
+import fallbackImage from "../assets/pizza-hero.png";
+import pizzaMuzzarella from "../assets/pizzaMuzzarella.webp";
+import hamburguesaCompleta from "../assets/hamburguesaCompleta.webp";
+import sandwichDeMilanesa from "../assets/SandwichDeMilanesa.webp";
+import pizzaCriolla from "../assets/pizzaCriolla.webp";
+import pizzaFugaceta from "../assets/pizzaFugaceta.webp";
+import SalchipapaGratinada from "../assets/SalchipapaGratinada.webp";
+import SalchipapaConHuevo from "../assets/SalchipapaConHuevo.webp";
+import hamburguesaEspecial1 from "../assets/hamburguesaEspecial1.webp"
 
-// Cuando agregues nuevas imágenes solo importa aquí:
-//
-// import hamburguesa from "../assets/hamburguesa-completa.webp";
-// import milanesa from "../assets/milanesa.webp";
-// import papas from "../assets/papas.webp";
 
 export const products = [
 
@@ -26,7 +29,7 @@ export const products = [
     description:
       "Nuestra clásica pizza de muzzarella con abundante queso.",
 
-    image: pizza,
+    image: pizzaMuzzarella,
 
     price: 8000,
 
@@ -49,7 +52,7 @@ export const products = [
     description:
       "Carne, queso, huevo, paleta, lechuga, tomate y aderezos.",
 
-    image: pizza,
+    image: hamburguesaCompleta,
 
     price: 4000,
 
@@ -78,13 +81,13 @@ export const products = [
     description:
       "Milanesa casera con verduras frescas.",
 
-    image: pizza,
+    image: sandwichDeMilanesa,
 
-    price: 6500,
+    price: 8000,
 
-    available: false,
+    available: true,
 
-    featured: false,
+    featured: true,
 
     options: {}
   },
@@ -92,29 +95,126 @@ export const products = [
   {
     id: 4,
 
-    slug: "papas-fritas",
+    slug: "Salchipapas-Gratinadas",
 
-    name: "Papas Fritas",
+    name: "Salchipapas Gratinadas",
 
     category: "Guarniciones",
 
     description:
-      "Papas fritas recién hechas.",
+      "Papas fritas recién hechas con Salchichas salteadas y gratinadas con queso Muzzarella.",
 
-    image: pizza,
+    image: SalchipapaGratinada,
 
-    price: 3500,
+    price: 6000,
 
-    available: false,
+    available: true,
 
-    featured: false,
+    featured: true,
 
     options: {
       sauces: [
         "Mayonesa",
-        "Ketchup"
+        "Ketchup",
+        "Mostaza"
+
       ]
     }
+  },
+  {
+    id: 5,
+
+    slug: "pizza-Criolla",
+
+    name: "Pizza Criolla",
+
+    category: "Pizzas",
+
+    description:
+      "Nuestra clásica pizza a la Criolla con abundante queso y Salsa Criolla tradicional.",
+
+    image: pizzaCriolla,
+
+    price: 10000,
+
+    available: true,
+
+    featured: true,
+
+    options: {}
+  },
+  {
+    id: 6,
+
+    slug: "pizza-Fugaceta",
+
+    name: "Pizza Fugaceta",
+
+    category: "Pizzas",
+
+    description:
+      "Nuestra clásica pizza Fugaceta con abundante queso y cebollas cortadas en juliana.",
+
+    image: pizzaFugaceta,
+
+    price: 10000,
+
+    available: true,
+
+    featured: true,
+
+    options: {}
+  },
+  {
+    id: 7,
+
+    slug: "Salchipapas-con-huevo",
+
+    name: "Salchipapas con Huevo",
+
+    category: "Guarniciones",
+
+    description:
+      "Papas fritas recién hechas con Salchichas salteadas y 2 huevos fritos.",
+
+    image: SalchipapaConHuevo,
+
+    price: 7000,
+
+    available: true,
+
+    featured: true,
+
+    options: {}
+  },
+  {
+    id: 8,
+
+    slug: "Hamburguesa-Especial",
+
+    name: "Hamburguesa Especial",
+
+    category: "Hamburguesas",
+
+    description:
+      "Hamburguesa completa Doble Carne con cebolla caramelizada y quezo muzzarella",
+
+    image: hamburguesaEspecial1,
+
+    price: 8000,
+
+    available: true,
+
+    featured: true,
+
+    options: {
+      sauces: [
+        "Mayonesa",
+        "Ketchup",
+        "Mostaza"
+      ]
   }
+}
+  
 
 ];

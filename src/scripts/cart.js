@@ -1,218 +1,318 @@
 import { AppState } from "./store.js";
-
-const CART_KEY = "foodexpress-cart";
+import { formatPrice } from "../utils/formatPrice.js";
+import { loadCart, saveCart } from "../utils/storage.js";
 
 const cartButton = document.querySelector("#cartButton");
-
 const cartCounter = document.querySelector("#cartCounter");
-
 const cartDrawer = document.querySelector("#cartDrawer");
-
 const cartOverlay = document.querySelector("#cartOverlay");
-
-const closeCart = document.querySelector("#closeCart");
-
-const cartItems = document.querySelector("#cartItems");
-
+const closeCartButton = document.querySelector("#closeCart");
+const cartItemsContainer = document.querySelector("#cartItems");
 const cartTotal = document.querySelector("#cartTotal");
+const clearCartButton = document.querySelector("#clearCart");
+let isInitialized = false;
 
-const formatter = new Intl.NumberFormat("es-AR");
-
-function save(){
-
-localStorage.setItem(CART_KEY,JSON.stringify(AppState.cart));
-
+function normalizeOptions(options = {}) {
+  return {
+    sauces: Array.isArray(options.sauces) ? [...options.sauces] : [],
+    extras: Array.isArray(options.extras) ? [...options.extras] : [],
+    notes: typeof options.notes === "string" ? options.notes.trim() : "",
+  };
 }
 
-function load(){
+function createCartItem({ productId, product, quantity = 1, unitPrice, options }) {
+  const normalizedQuantity = Math.max(1, Number(quantity) || 1);
+  const normalizedUnitPrice = Number(unitPrice) || 0;
 
-const data=localStorage.getItem(CART_KEY);
-
-if(data){
-
-AppState.cart=JSON.parse(data);
-
+  return {
+    uid: crypto.randomUUID(),
+    productId,
+    product: {
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      image: product.image,
+    },
+    quantity: normalizedQuantity,
+    unitPrice: normalizedUnitPrice,
+    subtotal: normalizedQuantity * normalizedUnitPrice,
+    options: normalizeOptions(options),
+  };
 }
 
-render();
-
+function calculateSubtotal(item) {
+  return item.quantity * item.unitPrice;
 }
 
-function total(){
-
-return AppState.cart.reduce((acc,item)=>{
-
-return acc+item.price*item.quantity;
-
-},0);
-
+function escapeHtml(value) {
+  return String(value).replace(/[&<>'"]/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "'": "&#39;",
+    '"': "&quot;",
+  })[character]);
 }
 
-function count(){
+function sameStringArrays(first, second) {
+  if (first.length !== second.length) return false;
 
-return AppState.cart.reduce((acc,item)=>{
-
-return acc+item.quantity;
-
-},0);
-
+  return first.every((value, index) => value === second[index]);
 }
 
-function render(){
-
-const items=count();
-
-cartCounter.textContent=items;
-
-if(items>0){
-
-cartButton.classList.remove("hidden");
-
-}else{
-
-cartButton.classList.add("hidden");
-
+function hasSameConfiguration(firstItem, secondItem) {
+  return (
+    firstItem.productId === secondItem.productId &&
+    firstItem.unitPrice === secondItem.unitPrice &&
+    sameStringArrays(firstItem.options.sauces, secondItem.options.sauces) &&
+    sameStringArrays(firstItem.options.extras, secondItem.options.extras) &&
+    firstItem.options.notes === secondItem.options.notes
+  );
 }
 
-cartItems.innerHTML="";
-
-if(AppState.cart.length===0){
-
-cartItems.innerHTML=`
-
-<p class="text-center text-gray-400">
-
-Tu carrito está vacío.
-
-</p>
-
-`;
-
-cartTotal.textContent="$0";
-
-return;
-
+function getCartItemByUid(uid) {
+  return AppState.cart.find((item) => item.uid === uid);
 }
 
-AppState.cart.forEach((item,index)=>{
-
-const div=document.createElement("div");
-
-div.className="card p-5";
-
-div.innerHTML=`
-
-<h3 class="font-bold text-xl">
-
-${item.name}
-
-</h3>
-
-<p class="mt-2 text-gray-400">
-
-Cantidad: ${item.quantity}
-
-</p>
-
-${item.sauces.length?
-
-`<p class="mt-2 text-sm">
-
-${item.sauces.join(", ")}
-
-</p>`:""}
-
-<div class="mt-5 flex justify-between items-center">
-
-<strong>
-
-$ ${formatter.format(item.price*item.quantity)}
-
-</strong>
-
-<button
-data-remove="${index}"
-class="rounded-lg bg-red-600 px-3 py-2"
->
-
-Eliminar
-
-</button>
-
-</div>
-
-`;
-
-cartItems.append(div);
-
-});
-
-cartItems.querySelectorAll("[data-remove]").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-AppState.cart.splice(btn.dataset.remove,1);
-
-save();
-
-render();
-
-});
-
-});
-
-cartTotal.textContent="$ "+formatter.format(total());
-
+function isCartItem(item) {
+  return (
+    item &&
+    typeof item.uid === "string" &&
+    typeof item.productId !== "undefined" &&
+    item.product &&
+    typeof item.product.id !== "undefined" &&
+    typeof item.product.name === "string" &&
+    Number.isFinite(item.quantity) &&
+    Number.isFinite(item.unitPrice) &&
+    item.options
+  );
 }
 
-export function addToCart(item){
+function hydrateCart(items) {
+  if (!Array.isArray(items)) return [];
 
-const found=AppState.cart.find(p=>{
-
-return p.id===item.id &&
-
-JSON.stringify(p.sauces)===JSON.stringify(item.sauces);
-
-});
-
-if(found){
-
-found.quantity+=item.quantity;
-
-}else{
-
-AppState.cart.push(item);
-
+  return items.filter(isCartItem).map((item) => ({
+    ...item,
+    product: { ...item.product },
+    options: normalizeOptions(item.options),
+    subtotal: calculateSubtotal(item),
+  }));
 }
 
-save();
-
-render();
-
+function synchronizeCart(nextCart) {
+  AppState.cart = nextCart.map((item) => ({
+    ...item,
+    subtotal: calculateSubtotal(item),
+  }));
+  saveCart(AppState.cart);
+  renderCart();
 }
 
-cartButton?.addEventListener("click",()=>{
+export function renderCart() {
+  const itemCount = getCartItemCount();
+  const isEmpty = AppState.cart.length === 0;
 
-cartDrawer.classList.remove("-translate-x-full");
+  if (cartCounter) cartCounter.textContent = itemCount;
+  cartButton?.classList.toggle("hidden", isEmpty);
+  clearCartButton?.classList.toggle("hidden", isEmpty);
 
-cartOverlay.classList.remove("hidden");
+  if (!cartItemsContainer || !cartTotal) return;
 
-});
+  cartItemsContainer.innerHTML = isEmpty
+    ? `
+      <div class="rounded-2xl border border-dashed border-white/15 bg-white/[0.03] px-6 py-12 text-center">
+        <span class="text-4xl" aria-hidden="true">🛒</span>
+        <h3 class="mt-4 text-lg font-bold">Tu carrito está vacío</h3>
+        <p class="mt-2 text-sm leading-6 text-gray-400">Agregá tus productos favoritos para comenzar tu pedido.</p>
+      </div>
+    `
+    : AppState.cart.map((item) => {
+      const productName = escapeHtml(item.product.name);
+      const uid = escapeHtml(item.uid);
+      const sauces = item.options.sauces.length
+        ? `<p class="mt-3 text-sm text-gray-300">Aderezos: ${item.options.sauces.map(escapeHtml).join(", ")}</p>`
+        : "";
+      const decreaseDisabled = item.quantity === 1 ? "disabled" : "";
+      const decreaseStyle = item.quantity === 1 ? "cursor-not-allowed opacity-40" : "hover:bg-white/10";
 
-closeCart?.addEventListener("click",()=>{
+      return `
+        <article class="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 class="text-lg font-bold">${productName}</h3>
+              <p class="mt-1 text-sm text-gray-400">Precio unitario: ${formatPrice(item.unitPrice)}</p>
+            </div>
+            <button
+              data-cart-action="remove"
+              data-cart-item-uid="${uid}"
+              class="rounded-lg px-2 py-1 text-sm font-medium text-red-400 transition hover:bg-red-500/10 hover:text-red-300"
+              type="button"
+              aria-label="Eliminar ${productName}"
+            >
+              Eliminar
+            </button>
+          </div>
+          ${sauces}
+          <div class="mt-5 flex items-center justify-between gap-4">
+            <div class="flex items-center rounded-xl border border-white/10 bg-black/20 p-1">
+              <button
+                data-cart-action="decrease"
+                data-cart-item-uid="${uid}"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-xl transition ${decreaseStyle}"
+                type="button"
+                aria-label="Disminuir cantidad de ${productName}"
+                ${decreaseDisabled}
+              >
+                −
+              </button>
+              <span class="min-w-10 px-2 text-center font-bold">${item.quantity}</span>
+              <button
+                data-cart-action="increase"
+                data-cart-item-uid="${uid}"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-xl transition hover:bg-white/10"
+                type="button"
+                aria-label="Aumentar cantidad de ${productName}"
+              >
+                +
+              </button>
+            </div>
+            <div class="text-right">
+              <span class="block text-xs font-medium uppercase tracking-wide text-gray-500">Subtotal</span>
+              <strong class="mt-1 block text-lg text-[var(--color-primary)]">${formatPrice(item.subtotal)}</strong>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  cartTotal.textContent = formatPrice(getCartTotal());
+}
 
-cartDrawer.classList.add("-translate-x-full");
+export function getCartItems() {
+  return AppState.cart.map((item) => ({
+    ...item,
+    product: { ...item.product },
+    options: {
+      ...item.options,
+      sauces: [...item.options.sauces],
+      extras: [...item.options.extras],
+    },
+  }));
+}
 
-cartOverlay.classList.add("hidden");
+export function getCartItemCount() {
+  return AppState.cart.reduce((count, item) => count + item.quantity, 0);
+}
 
-});
+export function getCartTotal() {
+  return AppState.cart.reduce((total, item) => total + item.subtotal, 0);
+}
 
-cartOverlay?.addEventListener("click",()=>{
+export function addCartItem(itemData) {
+  const newItem = createCartItem(itemData);
+  const existingItem = AppState.cart.find((item) => hasSameConfiguration(item, newItem));
 
-cartDrawer.classList.add("-translate-x-full");
+  if (existingItem) {
+    const nextCart = AppState.cart.map((item) =>
+      item.uid === existingItem.uid
+        ? { ...item, quantity: item.quantity + newItem.quantity }
+        : item,
+    );
 
-cartOverlay.classList.add("hidden");
+    synchronizeCart(nextCart);
+    return getCartItemByUid(existingItem.uid);
+  }
 
-});
+  synchronizeCart([...AppState.cart, newItem]);
+  return newItem;
+}
 
-load();
+export function updateCartItemQuantity(uid, quantity) {
+  const item = getCartItemByUid(uid);
+
+  if (!item) return null;
+
+  const normalizedQuantity = Number(quantity);
+  if (!Number.isFinite(normalizedQuantity) || normalizedQuantity < 1) {
+    return removeCartItem(uid);
+  }
+
+  const nextCart = AppState.cart.map((cartItem) =>
+    cartItem.uid === uid ? { ...cartItem, quantity: normalizedQuantity } : cartItem,
+  );
+
+  synchronizeCart(nextCart);
+  return getCartItemByUid(uid);
+}
+
+export function updateCartItemOptions(uid, options) {
+  const item = getCartItemByUid(uid);
+
+  if (!item) return null;
+
+  const nextCart = AppState.cart.map((cartItem) =>
+    cartItem.uid === uid
+      ? { ...cartItem, options: normalizeOptions(options) }
+      : cartItem,
+  );
+
+  synchronizeCart(nextCart);
+  return getCartItemByUid(uid);
+}
+
+export function removeCartItem(uid) {
+  const nextCart = AppState.cart.filter((item) => item.uid !== uid);
+
+  if (nextCart.length === AppState.cart.length) return null;
+
+  synchronizeCart(nextCart);
+  return uid;
+}
+
+export function clearCart() {
+  synchronizeCart([]);
+}
+
+export function openCart() {
+  cartDrawer?.classList.remove("-translate-x-full");
+  cartOverlay?.classList.remove("hidden");
+}
+
+export function closeCart() {
+  cartDrawer?.classList.add("-translate-x-full");
+  cartOverlay?.classList.add("hidden");
+}
+
+export function initializeCart() {
+  if (isInitialized) return;
+
+  AppState.cart = hydrateCart(loadCart());
+  cartButton?.addEventListener("click", openCart);
+  closeCartButton?.addEventListener("click", closeCart);
+  cartOverlay?.addEventListener("click", closeCart);
+  cartItemsContainer?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-cart-action]");
+
+    if (!button) return;
+
+    const uid = button.dataset.cartItemUid;
+    const action = button.dataset.cartAction;
+    const item = getCartItems().find((cartItem) => cartItem.uid === uid);
+
+    if (!item) return;
+
+    if (action === "increase") {
+      updateCartItemQuantity(uid, item.quantity + 1);
+      return;
+    }
+
+    if (action === "decrease") {
+      updateCartItemQuantity(uid, item.quantity - 1);
+      return;
+    }
+
+    if (action === "remove") removeCartItem(uid);
+  });
+  clearCartButton?.addEventListener("click", clearCart);
+  renderCart();
+  isInitialized = true;
+}

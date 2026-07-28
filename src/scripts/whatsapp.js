@@ -1,48 +1,23 @@
-import { AppState } from "./store.js";
+import { getCartItems, getCartTotal } from "./cart.js";
 import { SITE } from "../config/site.js";
+import { buildWhatsAppMessage } from "../utils/whatsappMessage.js";
 
-const button=document.querySelector("#sendWhatsapp");
+const button = document.querySelector("#sendWhatsapp");
 
-button?.addEventListener("click",()=>{
+button?.addEventListener("click", () => {
+  const items = getCartItems();
 
-if(AppState.cart.length===0){
+  if (items.length === 0) {
+    alert("El carrito está vacío.");
+    return;
+  }
 
-alert("El carrito está vacío.");
+  const message = buildWhatsAppMessage({
+    items,
+    total: getCartTotal(),
+  });
+  const encodedMessage = encodeURIComponent(message);
+  const whatsappUrl = `https://wa.me/${SITE.phone}?text=${encodedMessage}`;
 
-return;
-
-}
-
-let message="Hola 👋 Quiero realizar el siguiente pedido:%0A%0A";
-
-AppState.cart.forEach(item=>{
-
-message+=`${item.quantity} x ${item.name}`;
-
-if(item.sauces.length){
-
-message+=` (%20${item.sauces.join(", ")})`;
-
-}
-
-message+="%0A";
-
-});
-
-const total=AppState.cart.reduce((a,b)=>{
-
-return a+b.price*b.quantity;
-
-},0);
-
-message+=`%0ATotal: $${new Intl.NumberFormat("es-AR").format(total)}`;
-
-window.open(
-
-`https://wa.me/${SITE.phone}?text=${message}`,
-
-"_blank"
-
-);
-
+  window.open(whatsappUrl, "_blank");
 });

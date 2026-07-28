@@ -1,7 +1,7 @@
 ---
+import { Image } from "astro:assets";
 import { products } from "../data/products";
-
-const formatter = new Intl.NumberFormat("es-AR");
+import { formatPrice } from "../utils/formatPrice.js";
 ---
 
 <div
@@ -12,100 +12,55 @@ const formatter = new Intl.NumberFormat("es-AR");
 <aside
   id="menuDrawer"
   class="fixed right-0 top-0 z-50 h-screen w-full max-w-md translate-x-full overflow-y-auto bg-[var(--color-dark-soft)] shadow-2xl transition-transform duration-300"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="menuDrawerTitle"
+  aria-hidden="true"
+  tabindex="-1"
 >
-
   <div class="sticky top-0 flex items-center justify-between border-b border-white/10 bg-[var(--color-dark-soft)] p-6">
-
     <div>
-
-      <h2 class="text-2xl font-bold">
-
-        Menú
-
-      </h2>
-
-      <p class="text-sm text-gray-400">
-
-        Food Express
-
-      </p>
-
+      <h2 id="menuDrawerTitle" class="text-2xl font-bold">Menú</h2>
+      <p class="text-sm text-gray-400">Food Express</p>
     </div>
 
     <button
       id="closeDrawer"
       class="rounded-xl bg-red-600 px-4 py-2 font-bold"
+      type="button"
+      aria-label="Cerrar menú"
     >
-
       ✕
-
     </button>
-
   </div>
 
   <div class="space-y-6 p-6">
-
     {
-
-      products.map((product)=>(
-
-        <article
-          class="card cursor-pointer overflow-hidden"
-          data-product-id={product.id}
-        >
-
-          <img
-            src={product.image.src}
+      products.map((product) => (
+        <article class="card overflow-hidden">
+          <Image
+            src={product.image}
             alt={product.name}
+            width={640}
+            format="webp"
+            quality={70}
+            loading="lazy"
+            decoding="async"
             class="h-48 w-full object-cover"
           />
 
           <div class="p-5">
+            <span class="text-sm text-[var(--color-primary)]">{product.category}</span>
+            <h3 class="mt-2 text-xl font-bold">{product.name}</h3>
+            <p class="mt-2 text-sm text-gray-400">{product.description}</p>
 
-            <span class="text-sm text-[var(--color-primary)]">
-
-              {product.category}
-
-            </span>
-
-            <h3 class="mt-2 text-xl font-bold">
-
-              {product.name}
-
-            </h3>
-
-            <p class="mt-2 text-sm text-gray-400">
-
-              {product.description}
-
-            </p>
-
-            <div class="mt-4 flex items-center justify-between">
-
+            <div class="mt-4 flex items-center justify-between gap-4">
               {
-
-                product.available
-
-                ? (
-
-                  <strong class="text-xl text-[var(--color-primary)]">
-
-                    ${formatter.format(product.price)}
-
-                  </strong>
-
+                product.available ? (
+                  <strong class="text-xl text-[var(--color-primary)]">{formatPrice(product.price)}</strong>
+                ) : (
+                  <strong class="text-red-500">Próximamente</strong>
                 )
-
-                : (
-
-                  <strong class="text-red-500">
-
-                    Próximamente
-
-                  </strong>
-
-                )
-
               }
 
               <button
@@ -113,21 +68,12 @@ const formatter = new Intl.NumberFormat("es-AR");
                 data-open-product={product.id}
                 type="button"
               >
-
                 Ver
-
               </button>
-
             </div>
-
           </div>
-
         </article>
-
       ))
-
     }
-
   </div>
-
 </aside>

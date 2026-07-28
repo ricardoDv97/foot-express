@@ -1,17 +1,23 @@
 <div
   id="productModalOverlay"
-  class="fixed inset-0 z-[90] hidden items-center justify-center bg-black/80 p-5 backdrop-blur-sm"
+  class="fixed inset-0 z-[90] hidden items-center justify-center bg-black/80 p-5 opacity-0 pointer-events-none backdrop-blur-sm transition-opacity duration-200"
+  aria-hidden="true"
 >
 
   <div
     id="productModal"
-    class="relative max-h-[95vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-[var(--color-dark-soft)] shadow-2xl"
+    class="relative max-h-[95vh] w-full max-w-2xl scale-95 overflow-y-auto rounded-3xl bg-[var(--color-dark-soft)] opacity-0 shadow-2xl transition duration-200"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    tabindex="-1"
   >
 
     <button
       id="closeProductModal"
       class="absolute right-5 top-5 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-red-600 text-xl font-bold transition hover:scale-105"
       type="button"
+      aria-label="Cerrar producto"
     >
       ✕
     </button>
@@ -44,6 +50,12 @@
         id="modalPrice"
         class="mt-8 text-3xl font-bold text-[var(--color-primary)]"
       ></div>
+
+      <p
+        id="modalAvailability"
+        class="mt-6 hidden rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-300"
+        role="status"
+      ></p>
 
       <div
         id="saucesContainer"

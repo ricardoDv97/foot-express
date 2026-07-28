@@ -11,6 +11,7 @@ import Footer from "../components/Footer.astro";
 import MenuDrawer from "../components/MenuDrawer.astro";
 import CartButton from "../components/CartButton.astro";
 import CartDrawer from "../components/CartDrawer.astro";
+import Toast from "../components/Toast.astro";
 ---
 
 <Layout
@@ -41,14 +42,22 @@ import "../scripts/menu.js";
 
 import "../scripts/modal.js";
 
-import "../scripts/cart.js";
+import { initializeCart } from "../scripts/cart.js";
 
 import "../scripts/whatsapp.js";
+
+import "../scripts/toast.js";
+
+import "../scripts/drawerAccessibility.js";
+
+initializeCart();
 
 </script>
 
 <CartButton/>
 
 <CartDrawer/>
+
+<Toast/>
 
 </Layout>

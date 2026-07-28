@@ -1,10 +1,12 @@
 ---
-import "@fontsource/poppins/400.css";
-import "@fontsource/poppins/500.css";
-import "@fontsource/poppins/600.css";
-import "@fontsource/poppins/700.css";
+import "@fontsource/poppins/latin-400.css";
+import "@fontsource/poppins/latin-500.css";
+import "@fontsource/poppins/latin-600.css";
+import "@fontsource/poppins/latin-700.css";
 
 import "../styles/global.css";
+import logo from "../assets/logo.png";
+import { SITE } from "../config/site.js";
 
 interface Props {
   title?: string;
@@ -15,6 +17,24 @@ const {
   title = "Food Express | Comida Rápida",
   description = "La mejor comida rápida de Miguel Lanús."
 } = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, SITE.siteUrl).href;
+const socialImageUrl = new URL(logo.src, SITE.siteUrl).href;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  name: SITE.name,
+  url: SITE.siteUrl,
+  image: socialImageUrl,
+  telephone: `+${SITE.phone}`,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: SITE.address,
+    addressLocality: SITE.city,
+    addressRegion: SITE.province,
+    addressCountry: "AR",
+  },
+};
 ---
 
 <!DOCTYPE html>
@@ -33,8 +53,27 @@ content={description}
 
 <meta
 name="theme-color"
-content="#dc2626"
+content="#F4B400"
 />
+
+<link rel="canonical" href={canonicalUrl} />
+
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={socialImageUrl} />
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImageUrl} />
+
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
 
 <title>{title}</title>
 

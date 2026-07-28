@@ -257,3 +257,81 @@ a{
     animation:floating 4s ease-in-out infinite;
 
 }
+
+@keyframes cart-pulse{
+
+    0%,100%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.12);
+
+    }
+
+}
+
+.cart-pulse{
+
+    animation:cart-pulse .45s ease-out;
+
+}
+
+@keyframes toast-lifecycle{
+
+    0%{
+
+        opacity:0;
+
+        transform:translate(-50%,12px);
+
+    }
+
+    12%,84%{
+
+        opacity:1;
+
+        transform:translate(-50%,0);
+
+    }
+
+    100%{
+
+        opacity:0;
+
+        transform:translate(-50%,12px);
+
+    }
+
+}
+
+.toast-visible{
+
+    animation:toast-lifecycle 3.2s ease-in-out forwards;
+
+}
+
+@media (prefers-reduced-motion: reduce){
+
+    html{
+
+        scroll-behavior:auto;
+
+    }
+
+    *,*::before,*::after{
+
+        animation-duration:.01ms !important;
+
+        animation-iteration-count:1 !important;
+
+        scroll-behavior:auto !important;
+
+        transition-duration:.01ms !important;
+
+    }
+
+}

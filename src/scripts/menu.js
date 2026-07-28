@@ -1,29 +1,73 @@
-const button=document.querySelector("#menuButton");
+const button = document.querySelector("#menuButton");
+const drawer = document.querySelector("#menuDrawer");
+const overlay = document.querySelector("#drawerOverlay");
+const closeButton = document.querySelector("#closeDrawer");
 
-const drawer=document.querySelector("#menuDrawer");
-
-const overlay=document.querySelector("#drawerOverlay");
-
-const close=document.querySelector("#closeDrawer");
-
-function openDrawer(){
-
-drawer.classList.remove("translate-x-full");
-
-overlay.classList.remove("hidden");
-
+function isDrawerOpen() {
+  return Boolean(drawer && !drawer.classList.contains("translate-x-full"));
 }
 
-function closeDrawer(){
+function getFocusableElements() {
+  if (!drawer) return [];
 
-drawer.classList.add("translate-x-full");
-
-overlay.classList.add("hidden");
-
+  return [...drawer.querySelectorAll(
+    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+  )];
 }
 
-button?.addEventListener("click",openDrawer);
+function openDrawer() {
+  drawer?.classList.remove("translate-x-full");
+  overlay?.classList.remove("hidden");
+  drawer?.setAttribute("aria-hidden", "false");
+  button?.setAttribute("aria-expanded", "true");
 
-close?.addEventListener("click",closeDrawer);
+  requestAnimationFrame(() => {
+    closeButton?.focus();
+  });
+}
 
-overlay?.addEventListener("click",closeDrawer);
+function closeDrawer({ restoreFocus = true } = {}) {
+  drawer?.classList.add("translate-x-full");
+  overlay?.classList.add("hidden");
+  drawer?.setAttribute("aria-hidden", "true");
+  button?.setAttribute("aria-expanded", "false");
+
+  if (restoreFocus) button?.focus();
+}
+
+button?.addEventListener("click", openDrawer);
+closeButton?.addEventListener("click", () => closeDrawer());
+overlay?.addEventListener("click", () => closeDrawer());
+drawer?.querySelectorAll("[data-open-product]").forEach((productButton) => {
+  productButton.addEventListener("click", () => closeDrawer({ restoreFocus: false }));
+});
+
+document.addEventListener("keydown", (event) => {
+  if (!isDrawerOpen()) return;
+
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closeDrawer();
+    return;
+  }
+
+  if (event.key !== "Tab") return;
+
+  const focusableElements = getFocusableElements();
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements.at(-1);
+
+  if (!firstElement || !lastElement) {
+    event.preventDefault();
+    drawer?.focus();
+    return;
+  }
+
+  if (event.shiftKey && document.activeElement === firstElement) {
+    event.preventDefault();
+    lastElement.focus();
+  } else if (!event.shiftKey && document.activeElement === lastElement) {
+    event.preventDefault();
+    firstElement.focus();
+  }
+});
