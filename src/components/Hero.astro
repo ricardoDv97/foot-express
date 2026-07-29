@@ -6,6 +6,7 @@ import { SITE } from "../config/site.js";
 
 <section
   id="inicio"
+  data-hero
   class="relative overflow-hidden bg-[var(--color-dark)]"
 >
 
@@ -130,20 +131,65 @@ import { SITE } from "../config/site.js";
 
       <div class="absolute h-[450px] w-[450px] rounded-full bg-yellow-500/15 blur-3xl"></div>
 
-      <Image
-        src={pizza}
-        alt="Pizza"
-        width={960}
-        format="webp"
-        quality={75}
-        loading="eager"
-        decoding="async"
-        fetchpriority="high"
-        class="floating relative z-10 w-full max-w-xl drop-shadow-[0_35px_45px_rgba(0,0,0,.7)]"
-      />
+      <div data-hero-pizza-motion class="relative z-10 w-full max-w-xl will-change-transform">
+        <Image
+          src={pizza}
+          alt="Pizza"
+          width={960}
+          format="webp"
+          quality={75}
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          class="floating w-full drop-shadow-[0_35px_45px_rgba(0,0,0,.7)]"
+        />
+      </div>
 
     </div>
 
   </div>
 
 </section>
+
+<script>
+  const hero = document.querySelector("[data-hero]");
+  const pizzaMotion = document.querySelector("[data-hero-pizza-motion]");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let frameId = null;
+
+  function updatePizzaPosition() {
+    frameId = null;
+
+    if (!hero || !pizzaMotion || reducedMotion.matches) return;
+
+    const { top, height } = hero.getBoundingClientRect();
+    const progress = Math.min(Math.max(-top / (height * 0.8), 0), 1);
+    const translateX = progress * 125;
+    const translateY = progress * -4;
+    const rotation = progress * 8;
+    const scale = 1 - (progress * 0.04);
+
+    pizzaMotion.style.transform = `translate3d(${translateX}%, ${translateY}%, 0) rotate(${rotation}deg) scale(${scale})`;
+    pizzaMotion.style.opacity = String(1 - (progress * 0.25));
+  }
+
+  function requestPositionUpdate() {
+    if (frameId !== null) return;
+
+    frameId = requestAnimationFrame(updatePizzaPosition);
+  }
+
+  window.addEventListener("scroll", requestPositionUpdate, { passive: true });
+  window.addEventListener("resize", requestPositionUpdate);
+  reducedMotion.addEventListener("change", () => {
+    if (reducedMotion.matches && pizzaMotion) {
+      pizzaMotion.style.transform = "";
+      pizzaMotion.style.opacity = "";
+      return;
+    }
+
+    requestPositionUpdate();
+  });
+
+  requestPositionUpdate();
+</script>
