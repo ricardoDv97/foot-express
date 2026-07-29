@@ -1,6 +1,7 @@
 import { AppState } from "./store.js";
 import { formatPrice } from "../utils/formatPrice.js";
 import { loadCart, saveCart } from "../utils/storage.js";
+import { products } from "../data/products.js";
 
 const cartButton = document.querySelector("#cartButton");
 const cartCounter = document.querySelector("#cartCounter");
@@ -21,7 +22,6 @@ function normalizeOptions(options = {}) {
 }
 
 function createCartItem({ productId, product, quantity = 1, unitPrice, options }) {
-  const normalizedQuantity = Math.max(1, Number(quantity) || 1);
   const normalizedUnitPrice = Number(unitPrice) || 0;
 
   return {
@@ -33,9 +33,9 @@ function createCartItem({ productId, product, quantity = 1, unitPrice, options }
       category: product.category,
       image: product.image,
     },
-    quantity: normalizedQuantity,
+    quantity: 1,
     unitPrice: normalizedUnitPrice,
-    subtotal: normalizedQuantity * normalizedUnitPrice,
+    subtotal: normalizedUnitPrice,
     options: normalizeOptions(options),
   };
 }
@@ -52,22 +52,6 @@ function escapeHtml(value) {
     "'": "&#39;",
     '"': "&quot;",
   })[character]);
-}
-
-function sameStringArrays(first, second) {
-  if (first.length !== second.length) return false;
-
-  return first.every((value, index) => value === second[index]);
-}
-
-function hasSameConfiguration(firstItem, secondItem) {
-  return (
-    firstItem.productId === secondItem.productId &&
-    firstItem.unitPrice === secondItem.unitPrice &&
-    sameStringArrays(firstItem.options.sauces, secondItem.options.sauces) &&
-    sameStringArrays(firstItem.options.extras, secondItem.options.extras) &&
-    firstItem.options.notes === secondItem.options.notes
-  );
 }
 
 function getCartItemByUid(uid) {
@@ -91,12 +75,16 @@ function isCartItem(item) {
 function hydrateCart(items) {
   if (!Array.isArray(items)) return [];
 
-  return items.filter(isCartItem).map((item) => ({
-    ...item,
-    product: { ...item.product },
-    options: normalizeOptions(item.options),
-    subtotal: calculateSubtotal(item),
-  }));
+  return items.filter(isCartItem).flatMap((item) => {
+    const quantity = Math.max(1, Number(item.quantity) || 1);
+
+    return Array.from({ length: quantity }, () => createCartItem({
+      productId: item.productId,
+      product: item.product,
+      unitPrice: item.unitPrice,
+      options: item.options,
+    }));
+  });
 }
 
 function synchronizeCart(nextCart) {
@@ -129,11 +117,26 @@ export function renderCart() {
     : AppState.cart.map((item) => {
       const productName = escapeHtml(item.product.name);
       const uid = escapeHtml(item.uid);
+      const product = products.find((catalogProduct) => catalogProduct.id === item.productId);
+      const availableSauces = product?.options?.sauces ?? [];
       const sauces = item.options.sauces.length
         ? `<p class="mt-3 text-sm text-gray-300">Aderezos: ${item.options.sauces.map(escapeHtml).join(", ")}</p>`
+        : `<p class="mt-3 text-sm text-gray-400">Sin aderezos seleccionados</p>`;
+      const sauceEditor = availableSauces.length
+        ? `
+          <div data-sauce-editor="${uid}" class="mt-4 hidden rounded-xl border border-white/10 bg-black/20 p-3">
+            <p class="mb-2 text-sm font-medium">Aderezos para esta unidad</p>
+            <div class="grid gap-2">
+              ${availableSauces.map((sauce) => `
+                <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-300">
+                  <input data-cart-sauce data-cart-item-uid="${uid}" type="checkbox" value="${escapeHtml(sauce)}" ${item.options.sauces.includes(sauce) ? "checked" : ""}>
+                  ${escapeHtml(sauce)}
+                </label>
+              `).join("")}
+            </div>
+          </div>
+        `
         : "";
-      const decreaseDisabled = item.quantity === 1 ? "disabled" : "";
-      const decreaseStyle = item.quantity === 1 ? "cursor-not-allowed opacity-40" : "hover:bg-white/10";
 
       return `
         <article class="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
@@ -153,19 +156,24 @@ export function renderCart() {
             </button>
           </div>
           ${sauces}
+          ${availableSauces.length ? `
+            <button data-cart-action="edit-sauces" data-cart-item-uid="${uid}" class="mt-3 text-sm font-medium text-[var(--color-primary)] transition hover:text-yellow-300" type="button">
+              Editar aderezos
+            </button>
+            ${sauceEditor}
+          ` : ""}
           <div class="mt-5 flex items-center justify-between gap-4">
             <div class="flex items-center rounded-xl border border-white/10 bg-black/20 p-1">
               <button
                 data-cart-action="decrease"
                 data-cart-item-uid="${uid}"
-                class="flex h-9 w-9 items-center justify-center rounded-lg text-xl transition ${decreaseStyle}"
+                class="flex h-9 w-9 items-center justify-center rounded-lg text-xl transition hover:bg-white/10"
                 type="button"
-                aria-label="Disminuir cantidad de ${productName}"
-                ${decreaseDisabled}
+                aria-label="Quitar una unidad de ${productName}"
               >
                 −
               </button>
-              <span class="min-w-10 px-2 text-center font-bold">${item.quantity}</span>
+              <span class="min-w-10 px-2 text-center text-sm font-bold">1 un.</span>
               <button
                 data-cart-action="increase"
                 data-cart-item-uid="${uid}"
@@ -208,22 +216,11 @@ export function getCartTotal() {
 }
 
 export function addCartItem(itemData) {
-  const newItem = createCartItem(itemData);
-  const existingItem = AppState.cart.find((item) => hasSameConfiguration(item, newItem));
+  const quantity = Math.max(1, Number(itemData.quantity) || 1);
+  const newItems = Array.from({ length: quantity }, () => createCartItem(itemData));
 
-  if (existingItem) {
-    const nextCart = AppState.cart.map((item) =>
-      item.uid === existingItem.uid
-        ? { ...item, quantity: item.quantity + newItem.quantity }
-        : item,
-    );
-
-    synchronizeCart(nextCart);
-    return getCartItemByUid(existingItem.uid);
-  }
-
-  synchronizeCart([...AppState.cart, newItem]);
-  return newItem;
+  synchronizeCart([...AppState.cart, ...newItems]);
+  return newItems[0];
 }
 
 export function updateCartItemQuantity(uid, quantity) {
@@ -301,16 +298,36 @@ export function initializeCart() {
     if (!item) return;
 
     if (action === "increase") {
-      updateCartItemQuantity(uid, item.quantity + 1);
+      addCartItem(item);
       return;
     }
 
     if (action === "decrease") {
-      updateCartItemQuantity(uid, item.quantity - 1);
+      removeCartItem(uid);
+      return;
+    }
+
+    if (action === "edit-sauces") {
+      const editor = cartItemsContainer.querySelector(`[data-sauce-editor="${uid}"]`);
+      editor?.classList.toggle("hidden");
       return;
     }
 
     if (action === "remove") removeCartItem(uid);
+  });
+  cartItemsContainer?.addEventListener("change", (event) => {
+    const input = event.target.closest("[data-cart-sauce]");
+    if (!input) return;
+
+    const uid = input.dataset.cartItemUid;
+    const item = getCartItemByUid(uid);
+    if (!item) return;
+
+    const selectedSauces = [...cartItemsContainer.querySelectorAll(
+      `[data-cart-sauce][data-cart-item-uid="${uid}"]:checked`,
+    )].map((sauceInput) => sauceInput.value);
+
+    updateCartItemOptions(uid, { ...item.options, sauces: selectedSauces });
   });
   clearCartButton?.addEventListener("click", clearCart);
   renderCart();
