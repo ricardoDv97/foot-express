@@ -2,7 +2,7 @@ import hamburCompletaX2 from "../assets/hamburCompletaX2.webp";
 import hamburCompletaX4 from "../assets/hamburCompletaX4.webp";
 import pizzaX2 from "../assets/pizzaX2.webp";
 import pizzaX4 from "../assets/pizzaX4.webp";
-import sandwichDeMilanesaX2 from "../assets/sandwichDeMilanesa.webp";
+import sandwichDeMilanesaX2 from "../assets/SandwichDeMilanesaX2.webp";
 
 // Las promociones son una fuente de datos independiente, pero respetan el
 // contrato de producto para poder usar las mismas cards y el mismo modal.
