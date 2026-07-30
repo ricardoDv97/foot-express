@@ -1,4 +1,4 @@
-import { products } from "../data/products";
+import { catalog } from "../data/catalog.js";
 import { formatPrice } from "../utils/formatPrice.js";
 import { addCartItem } from "./cart.js";
 
@@ -154,7 +154,7 @@ function renderModal(product) {
 }
 
 function openProduct(productId, trigger) {
-  const product = products.find((item) => item.id === productId);
+  const product = catalog.find((item) => item.id === productId);
 
   if (!product) return;
 

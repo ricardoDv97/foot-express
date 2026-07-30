@@ -1,0 +1,30 @@
+---
+import { promotions } from "../data/promotions.js";
+import ProductCard from "./ProductCard.astro";
+---
+
+<section id="promociones" class="py-28">
+  <div class="container-custom">
+    <div class="mx-auto mb-16 max-w-3xl text-center">
+      <span class="inline-flex rounded-full border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/10 px-5 py-2 text-sm font-semibold text-[var(--color-primary)]">
+        🔥 PROMOCIONES
+      </span>
+
+      <h2 class="section-title mt-6">
+        Las ofertas más elegidas de la semana
+      </h2>
+
+      <p class="section-subtitle mt-6">
+        Aprovechá nuestros combos exclusivos y disfrutá más por menos.
+      </p>
+    </div>
+
+    <div class="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+      {
+        promotions.map((promotion) => (
+          <ProductCard product={promotion} />
+        ))
+      }
+    </div>
+  </div>
+</section>

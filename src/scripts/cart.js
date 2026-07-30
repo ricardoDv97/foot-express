@@ -1,7 +1,7 @@
 import { AppState } from "./store.js";
 import { formatPrice } from "../utils/formatPrice.js";
 import { loadCart, saveCart } from "../utils/storage.js";
-import { products } from "../data/products.js";
+import { catalog } from "../data/catalog.js";
 
 const cartButton = document.querySelector("#cartButton");
 const cartCounter = document.querySelector("#cartCounter");
@@ -117,7 +117,7 @@ export function renderCart() {
     : AppState.cart.map((item) => {
       const productName = escapeHtml(item.product.name);
       const uid = escapeHtml(item.uid);
-      const product = products.find((catalogProduct) => catalogProduct.id === item.productId);
+      const product = catalog.find((catalogProduct) => catalogProduct.id === item.productId);
       const availableSauces = product?.options?.sauces ?? [];
       const sauces = item.options.sauces.length
         ? `<p class="mt-3 text-sm text-gray-300">Aderezos: ${item.options.sauces.map(escapeHtml).join(", ")}</p>`
