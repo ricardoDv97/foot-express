@@ -13,6 +13,7 @@ import pizzaFugaceta from "../assets/pizzaFugaceta.webp";
 import SalchipapaGratinada from "../assets/SalchipapaGratinada.webp";
 import SalchipapaConHuevo from "../assets/SalchipapaConHuevo.webp";
 import hamburguesaEspecial1 from "../assets/hamburguesaEspecial1.webp"
+import empanadas from "../assets/empanadas.webp"
 
 
 export const products = [
@@ -214,7 +215,29 @@ export const products = [
         "Mostaza"
       ]
   }
-}
+},
+{
+    id: 8,
+
+    slug: "empanadas",
+
+    name: "Empanadas de carne",
+
+    category: "empanadas",
+
+    description:
+      "Empanadas de Carne Vacuna X 12 Unidades.",
+
+    image: empanadas,
+
+    price: 12000,
+
+    available: true,
+
+    featured: true,
+
+    options: {}
+  }
   
 
 ];

@@ -2,6 +2,7 @@ import hamburCompletaX2 from "../assets/hamburCompletaX2.webp";
 import hamburCompletaX4 from "../assets/hamburCompletaX4.webp";
 import pizzaX2 from "../assets/pizzaX2.webp";
 import pizzaX4 from "../assets/pizzaX4.webp";
+import sandwichDeMilanesaX2 from "../assets/sandwichDeMilanesa.webp";
 
 // Las promociones son una fuente de datos independiente, pero respetan el
 // contrato de producto para poder usar las mismas cards y el mismo modal.
@@ -58,4 +59,18 @@ export const promotions = [
     featured: true,
     options: {},
   },
+  {
+    id: 105,
+    slug: "promo-2-sandwichDeMilanesa",
+    name: "Promo 2 Sanwich de Milanesa",
+    category: "Promociones",
+    description: "2 Sandwich de Milanesa de Pollo con Lechuga, tomate y aderezos.",
+    image: sandwichDeMilanesaX2,
+    price: 15000,
+    available: true,
+    featured: true,
+    options: {
+      sauces: ["Mayonesa", "Ketchup", "Mostaza"],
+    },
+  }
 ];
