@@ -9,6 +9,8 @@ export const SITE = {
 
   address: "Capitán Giachino 2025",
 
+  mapsUrl: "https://www.google.com/maps/dir/?api=1&destination=Cap.%20Giachino%202025%2C%20Posadas%2C%20Misiones%2C%20Argentina",
+
   neighborhood: "Miguel Lanús",
 
   city: "Posadas",

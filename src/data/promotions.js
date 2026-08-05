@@ -3,6 +3,9 @@ import hamburCompletaX4 from "../assets/hamburCompletaX4.webp";
 import pizzaX2 from "../assets/pizzaX2.webp";
 import pizzaX4 from "../assets/pizzaX4.webp";
 import sandwichDeMilanesaX2 from "../assets/SandwichDeMilanesaX2.webp";
+import promoPapas from "../assets/promoPapas.webp";
+
+
 
 // Las promociones son una fuente de datos independiente, pero respetan el
 // contrato de producto para poder usar las mismas cards y el mismo modal.
@@ -71,6 +74,19 @@ export const promotions = [
     featured: true,
     options: {
       sauces: ["Mayonesa", "Ketchup", "Mostaza"],
+    },
+  },
+  {
+    id: 106,
+    slug: "promo-papas",
+    name: "¡Promo de Papas Fritas!",
+    category: "Promociones",
+    description: "llevando cualquier producto, Las papas fritas tienen descuento.",
+    image: promoPapas,
+    price: 5000,
+    available: true,
+    featured: true,
+    options: {
     },
   }
 ];

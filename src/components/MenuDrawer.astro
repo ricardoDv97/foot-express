@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import { products } from "../data/products";
 import { formatPrice } from "../utils/formatPrice.js";
+import { SITE } from "../config/site.js";
 ---
 
 <div
@@ -35,6 +36,18 @@ import { formatPrice } from "../utils/formatPrice.js";
   </div>
 
   <div class="space-y-6 p-6">
+    <nav aria-label="Navegación móvil">
+      <a
+        href={SITE.mapsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-close-menu-drawer
+        class="block rounded-xl border border-white/10 px-5 py-4 font-medium transition duration-300 hover:border-red-600 hover:text-red-500"
+      >
+        Ubicación
+      </a>
+    </nav>
+
     {
       products.map((product) => (
         <article class="card overflow-hidden">

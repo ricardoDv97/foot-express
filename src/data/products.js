@@ -14,6 +14,7 @@ import SalchipapaGratinada from "../assets/SalchipapaGratinada.webp";
 import SalchipapaConHuevo from "../assets/SalchipapaConHuevo.webp";
 import hamburguesaEspecial1 from "../assets/hamburguesaEspecial1.webp"
 import empanadas from "../assets/empanadas.webp"
+import papasConAderezos from "../assets/papasConAderezos.webp";
 
 
 export const products = [
@@ -237,6 +238,33 @@ export const products = [
     featured: true,
 
     options: {}
+  },
+  {
+    id: 10,
+
+    slug: "Papas-Fritas",
+
+    name: "Papas Fritas con Aderezos",
+
+    category: "Papas Fritas",
+
+    description: "Papas Fritas crugientes con los aderezos que elijas!!.",
+
+    image: papasConAderezos,
+
+    price: 6000,
+
+    available: true,
+
+    featured: true,
+
+    options: {
+      sauces: [
+        "Mayonesa",
+        "Ketchup",
+        "Mostaza"
+      ]
+    }
   }
   
 

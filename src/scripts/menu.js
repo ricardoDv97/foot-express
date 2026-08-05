@@ -41,6 +41,9 @@ overlay?.addEventListener("click", () => closeDrawer());
 drawer?.querySelectorAll("[data-open-product]").forEach((productButton) => {
   productButton.addEventListener("click", () => closeDrawer({ restoreFocus: false }));
 });
+drawer?.querySelectorAll("[data-close-menu-drawer]").forEach((link) => {
+  link.addEventListener("click", () => closeDrawer({ restoreFocus: false }));
+});
 
 document.addEventListener("keydown", (event) => {
   if (!isDrawerOpen()) return;
